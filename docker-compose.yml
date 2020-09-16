@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:latest
+    container_name: db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    networks:
+      - laravel_angular_app_tier
+  server:
+    image: nginx:alpine
+    container_name: server
+    restart: unless-stopped
+    depends_on:
+      - api
+      - ui
+    volumes:
+      - .:/opt/laravel_angular_app:ro
+      - ./docker/nginx:/etc/nginx/conf.d:ro
+    networks:
+      - laravel_angular_app_tier
+    ports:
+      - "9910:9910"
+      - "9920:9920"
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/api.dockerfile
+    container_name: api
+    restart: unless-stopped
+    depends_on:
+      - db
+    volumes:
+      - .:/opt/laravel_angular_app
+    working_dir: /opt/laravel_angular_app
+    user: laravel_angular_app
+    command: >
+      sh -c 'chown -R laravel_angular_app:laravel_angular_app . && php-fpm'
+    networks:
+      - laravel_angular_app_tier
+  ui:
+    image: node:alpine
+    container_name: ui
+    restart: unless-stopped
+    depends_on:
+      - api
+    volumes:
+      - ./gui:/opt/laravel_angular_app
+    working_dir: /opt/laravel_angular_app
+    command: sh -c 'npm i && npx ng serve --host 0.0.0.0 --publicHost ui'
+    networks:
+      - laravel_angular_app_tier
+
+networks:
+  laravel_angular_app_tier:
+    driver: bridge
