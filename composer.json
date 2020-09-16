@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "hu553in/laravel-angular-app",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Sample web app built with Laravel and Angular.",
     "keywords": [
         "framework",
         "laravel"
