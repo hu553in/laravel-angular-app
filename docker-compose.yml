@@ -41,7 +41,7 @@ services:
       - .:/opt/laravel_angular_app
     working_dir: /opt/laravel_angular_app
     user: laravel_angular_app
-    command: sh -c 'chown -R laravel_angular_app:laravel_angular_app . && php-fpm'
+    command: sh -c 'chown -R laravel_angular_app:laravel_angular_app . && composer install && php-fpm'
     networks:
       - laravel_angular_app_tier
   ui:
