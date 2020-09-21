@@ -12,6 +12,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    command: --default_authentication_plugin=mysql_native_password
     networks:
       - laravel_angular_app_tier
   server:
@@ -41,7 +42,15 @@ services:
       - .:/opt/laravel_angular_app
     working_dir: /opt/laravel_angular_app
     user: laravel_angular_app
-    command: sh -c 'chown -R laravel_angular_app:laravel_angular_app . && composer install && php-fpm'
+    command: >
+      sh -c '
+        chown -R laravel_angular_app:laravel_angular_app . &&
+        composer install &&
+        /opt/wait-for-it.sh -t 0 db:3306 &&
+        php artisan migrate &&
+        php artisan db:seed &&
+        php-fpm
+      '
     networks:
       - laravel_angular_app_tier
   ui:
@@ -57,4 +66,3 @@ services:
 
 networks:
   laravel_angular_app_tier:
-    driver: bridge

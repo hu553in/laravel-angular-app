@@ -11,6 +11,11 @@ This repository contains a sample web app built with Laravel and Angular.
 * MySQL
 * nginx
 
+## API
+
+See [openapi.yml](./openapi.yml).
+You can use [Swagger Editor](https://editor.swagger.io) to render it as HTML.
+
 ## How to run
 
 1. Install `GNU Make`, `Docker`, `Docker Compose`

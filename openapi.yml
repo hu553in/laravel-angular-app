@@ -1,0 +1,140 @@
+openapi: "3.0.0"
+
+info:
+  title: Public transport
+  version: "1.0.0"
+  description: |
+    API for public transport CRUD app.
+    All responses are wrapped in the envelop:
+      - `success` - boolean value
+      - `errorMessage` - string value
+      - `data` - value of specified schema type
+  contact:
+    email: r.m.khasanshin@gmail.com
+
+tags:
+  - name: Public transport
+
+paths:
+  /public_transport:
+    get:
+      tags:
+        - Public transport
+      summary: Get all public transport
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicTransport"
+        "500":
+          description: Unknown error
+    post:
+      tags:
+        - Public transport
+      summary: Add public transport
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicTransport"
+        "500":
+          description: Unknown error
+  /public_transport/{id}:
+    get:
+      tags:
+        - Public transport
+      summary: Get public transport by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+          description: Public transport ID
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicTransport"
+        "404":
+          description: Public transport is not found
+        "500":
+          description: Unknown error
+    delete:
+      tags:
+        - Public transport
+      summary: Delete public transport
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+          description: Public transport ID
+      responses:
+        "204":
+          description: Success
+        "404":
+          description: Public transport is not found
+        "500":
+          description: Unknown error
+    put:
+      tags:
+        - Public transport
+      summary: Update public transport
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+          description: Public transport ID
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicTransport"
+        "404":
+          description: Public transport is not found
+        "500":
+          description: Unknown error
+
+components:
+  schemas:
+    PublicTransport:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 12
+        type:
+          type: string
+          example: bus
+        route_number:
+          type: number
+          example: 32
+        capacity:
+          type: number
+          example: 50
+        organization_name:
+          type: string
+          example: Пассажирское предприятие №8
+        created_at:
+          type: string
+          example: "2020-09-21T08:41:28.000000Z"
+        updated_at:
+          type: string
+          example: "2020-09-21T08:41:28.000000Z"
