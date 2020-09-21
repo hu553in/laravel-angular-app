@@ -6,9 +6,9 @@ info:
   description: |
     API for public transport CRUD app.
     All responses are wrapped in the envelop:
-      - `success` - boolean value
-      - `errorMessage` - string value
-      - `data` - value of specified schema type
+      - `statusCode` - integer that represents HTTP response status code
+      - `error` - nullable string that represents error message
+      - `data` - nullable value of specified schema type
   contact:
     email: r.m.khasanshin@gmail.com
 

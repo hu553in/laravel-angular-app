@@ -37,9 +37,15 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof ModelNotFoundException) {
-            return response()->common(false, 404, null, "Resource is not found");
+            return response()->common(404, null, "Resource is not found");
         }
         $message = $exception->getMessage();
-        return response()->common(false, 500, null, isset($message) ? $message : "Unknown error");
+        return response()->common(
+            500,
+            null,
+            isset($message) && strlen($message) > 0
+                ? $message
+                : "Unknown error"
+        );
     }
 }

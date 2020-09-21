@@ -19,4 +19,9 @@ class PublicTransport extends Model
     ];
 
     protected $table = 'public_transport';
+
+    public function getIdAttribute(int $id)
+    {
+        return $id;
+    }
 }

@@ -16,12 +16,12 @@ class ResponseMacroServiceProvider extends ServiceProvider
     {
         Response::macro(
             'common',
-            function (bool $success, int $status, $data, string $errorMessage = null) {
+            function (int $statusCode, $data = null, string $error = null, array $headers = []) {
                 return Response::json([
-                    'success' => $success,
-                    'errorMessage' => $errorMessage,
+                    'statusCode' => $statusCode,
                     'data' => $data,
-                ], $status);
+                    'error' => $error,
+                ], $statusCode, $headers);
             }
         );
     }
