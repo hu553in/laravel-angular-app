@@ -20,9 +20,8 @@ class PublicTransportController extends Controller
     public function add(Request $request)
     {
         $publicTransport = PublicTransport::create($request->all());
-        $apiLocation = env("API_LOCATION", env("APP_URL", ""));
         $headers = [
-            'Location' => "{$apiLocation}/api/public_transport/{$publicTransport->id}",
+            'Location' => "/public_transport/{$publicTransport->id}",
         ];
         return response()->common(201, $publicTransport, null, $headers);
     }

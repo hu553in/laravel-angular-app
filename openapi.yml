@@ -36,9 +36,21 @@ paths:
       tags:
         - Public transport
       summary: Add public transport
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddPublicTransportRequestBody"
       responses:
         "201":
           description: Success
+          headers:
+            Location:
+              description: Added public transport URL (relative to API URL)
+              schema:
+                type: string
+                example: /public_transport/12
           content:
             application/json:
               schema:
@@ -138,3 +150,18 @@ components:
         updated_at:
           type: string
           example: "2020-09-21T08:41:28.000000Z"
+    AddPublicTransportRequestBody:
+      type: object
+      properties:
+        type:
+          type: string
+          example: bus
+        route_number:
+          type: number
+          example: 32
+        capacity:
+          type: number
+          example: 50
+        organization_name:
+          type: string
+          example: Пассажирское предприятие №8
