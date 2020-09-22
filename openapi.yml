@@ -145,8 +145,8 @@ components:
           type: string
           example: bus
         route_number:
-          type: number
-          example: 32
+          type: string
+          example: 32г
         capacity:
           type: number
           example: 50
@@ -171,8 +171,8 @@ components:
           type: string
           example: bus
         route_number:
-          type: number
-          example: 32
+          type: string
+          example: 32г
         capacity:
           type: number
           example: 50
