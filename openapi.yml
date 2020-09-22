@@ -179,8 +179,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6OTkyMFwvYXBpXC9zaWduX2luIiwiaWF0IjoxNjAwNzc3MzE2LCJleHAiOjE2MDA3ODA5MTYsIm5iZiI6MTYwMDc3NzMxNiwianRpIjoiVG1Va2R0eUhUZU9yRUhNWCIsInN1YiI6MywicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.cp8WuCb3qCm7aKCTn4yznOxzjzI1fGKAKmOjfe02_bU
+                $ref: '#/components/schemas/AuthDataObject'
         "400":
           description: Invalid credentials.
         "500":
@@ -380,9 +379,8 @@ components:
       properties:
         user:
           $ref: '#/components/schemas/User'
-        token:
-          type: string
-          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6OTkyMFwvYXBpXC9zaWduX2luIiwiaWF0IjoxNjAwNzc3MzE2LCJleHAiOjE2MDA3ODA5MTYsIm5iZiI6MTYwMDc3NzMxNiwianRpIjoiVG1Va2R0eUhUZU9yRUhNWCIsInN1YiI6MywicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.cp8WuCb3qCm7aKCTn4yznOxzjzI1fGKAKmOjfe02_bU
+        auth_data:
+          $ref: '#/components/schemas/AuthDataObject'
     User:
       type: object
       description: User model.
@@ -397,3 +395,20 @@ components:
         email:
           type: string
           format: email
+    AuthDataObject:
+      type: object
+      description: Auth data object.
+      required:
+        - token
+        - token_type
+        - expires_in
+      properties:
+        token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6OTkyMFwvYXBpXC9zaWduX2luIiwiaWF0IjoxNjAwNzc3MzE2LCJleHAiOjE2MDA3ODA5MTYsIm5iZiI6MTYwMDc3NzMxNiwianRpIjoiVG1Va2R0eUhUZU9yRUhNWCIsInN1YiI6MywicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.cp8WuCb3qCm7aKCTn4yznOxzjzI1fGKAKmOjfe02_bU
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          example: 3600
