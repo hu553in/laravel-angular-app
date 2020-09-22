@@ -2,64 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PublicTransport\AddRequest;
+use App\Http\Requests\PublicTransport\UpdateRequest;
 use App\Models\PublicTransport;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use App\Services\PublicTransportService;
+use Illuminate\Http\Response;
 
 class PublicTransportController extends Controller
 {
-    public function getAll()
+    public function getAll(PublicTransportService $service)
     {
-        return response()->common(200, PublicTransport::all());
+        return response()->common(Response::HTTP_OK, $service->getAll());
     }
 
     public function get(PublicTransport $publicTransport)
     {
-        return response()->common(200, $publicTransport);
+        return response()->common(Response::HTTP_OK, $publicTransport);
     }
 
-    public function add(Request $request)
+    public function add(AddRequest $request, PublicTransportService $service)
     {
-        $publicTransportTypes = config('constants.public_transport_types');
-        $validator = Validator::make($request->all(), [
-            'type' => ['required', 'string', Rule::in($publicTransportTypes)],
-            'route_number' => ['required', 'string'],
-            'capacity' => ['required', 'integer', 'gte:1'],
-            'organization_name' => ['required', 'string'],
-        ]);
-        if ($validator->fails()) {
-            return response()->common(400, null, $validator->errors()->all());
-        }
-        $publicTransport = PublicTransport::create($request->all());
-        $headers = [
-            'Location' => "/public_transport/{$publicTransport->id}",
-        ];
-        return response()->common(201, $publicTransport, [], $headers);
+        $publicTransport = $service->add($request->all());
+        $headers = ['Location' => "/public_transport/{$publicTransport->id}"];
+        return response()->common(Response::HTTP_CREATED, $publicTransport, [], $headers);
     }
 
-    public function update(Request $request, PublicTransport $publicTransport)
+    public function update(UpdateRequest $request, PublicTransport $publicTransport, PublicTransportService $service)
     {
-        $publicTransportTypes = config('constants.public_transport_types');
-        $validator = Validator::make($request->all(), [
-            'type' => ['string', Rule::in($publicTransportTypes)],
-            'route_number' => ['string'],
-            'capacity' => ['integer', 'gte:1'],
-            'organization_name' => ['string'],
-        ]);
-        if ($validator->fails()) {
-            return response()->common(400, null, $validator->errors()->all());
-        }
-        $publicTransport->update($request->all());
-        if (count($publicTransport->getChanges()) > 0) {
-            $publicTransport->touch();
-        }
-        return response()->common(200, $publicTransport);
+        return response()->common(
+            Response::HTTP_OK,
+            $service->update($request->all(), $publicTransport)
+        );
     }
 
-    public function delete(PublicTransport $publicTransport)
+    public function delete(PublicTransport $publicTransport, PublicTransportService $service)
     {
-        $publicTransport->delete();
-        return response()->common(204);
+        $service->delete($publicTransport);
+        return response()->common(Response::HTTP_NO_CONTENT);
     }
 }

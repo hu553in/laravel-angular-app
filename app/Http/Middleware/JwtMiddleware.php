@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -20,16 +21,19 @@ class JwtMiddleware extends BaseMiddleware
      */
     public function handle($request, Closure $next)
     {
+        $respond = function (string $error) {
+            return response()->common(Response::HTTP_UNAUTHORIZED, null, [$error]);
+        };
         try {
             if (!JWTAuth::parseToken()->authenticate()) {
-                return response()->common(401, null, ["Unable to authenticate user by token"]);
+                return $respond("Unable to authenticate user by token");
             }
         } catch (TokenExpiredException $e) {
-            return response()->common(401, null, ["Token has expired"]);
+            return $respond("Token has expired");
         } catch (TokenInvalidException $e) {
-            return response()->common(401, null, ["Token is invalid"]);
+            return $respond("Token is invalid");
         } catch (JWTException $e) {
-            return response()->common(401, null, ["Unable to authenticate user by token"]);
+            return $respond("Unable to authenticate user by token");
         }
         return $next($request);
     }

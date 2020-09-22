@@ -2,65 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Exceptions\InvalidCredentialsException;
+use App\Exceptions\UnableToAuthenticateUserByTokenException;
+use App\Http\Requests\User\SignInRequest;
+use App\Http\Requests\User\SignUpRequest;
+use App\Services\UserService;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    public function signIn(Request $request)
+    public function signIn(SignInRequest $request, UserService $service)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'min:6'],
-        ]);
-        if ($validator->fails()) {
-            return response()->common(400, null, $validator->errors()->all());
+        try {
+            return response()->common(
+                Response::HTTP_OK,
+                $service->signIn($request->only("email", "password"))
+            );
+        } catch (InvalidCredentialsException $e) {
+            return response()->common(
+                Response::HTTP_BAD_REQUEST,
+                null,
+                ["Invalid credentials"]
+            );
         }
-        $credentials = $request->only("email", "password");
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->common(400, null, ["Invalid credentials"]);
-        }
-        return response()->common(200, [
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
-        ]);
     }
 
-    public function signUp(Request $request)
+    public function signUp(SignUpRequest $request, UserService $service)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
-        ]);
-        if ($validator->fails()) {
-            return response()->common(400, null, $validator->errors()->all());
-        }
-        $user = User::create([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password' => Hash::make($request->get('password')),
-        ]);
-        $token = JWTAuth::fromUser($user);
-        return response()->common(201, [
-            'user' => $user,
-            'auth_data' => [
-                'token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            ]
-        ]);
+        return response()->common(
+            Response::HTTP_CREATED,
+            $service->signUp(
+                $request->get('name'),
+                $request->get('email'),
+                $request->get('password')
+            )
+        );
     }
 
-    public function whoami()
+    public function whoami(UserService $service)
     {
-        if (!$user = JWTAuth::parseToken()->authenticate()) {
-            return response()->common(401, null, ["Unable to authenticate user by token"]);
+        try {
+            return response()->common(Response::HTTP_OK, $service->whoami());
+        } catch (UnableToAuthenticateUserByTokenException $e) {
+            return response()->common(Response::HTTP_UNAUTHORIZED, null, ["Unable to authenticate user by token"]);
         }
-        return response()->common(200, $user);
     }
 }

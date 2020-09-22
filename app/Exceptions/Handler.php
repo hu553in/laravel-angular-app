@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -39,10 +41,10 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof ModelNotFoundException) {
-            return response()->common(404, null, ["Requested resource is not found"]);
+            return response()->common(Response::HTTP_NOT_FOUND, null, ["Requested resource is not found"]);
         }
         if ($exception instanceof NotFoundHttpException) {
-            return response()->common(404, null, ["Requested HTTP resource is not found"]);
+            return response()->common(Response::HTTP_NOT_FOUND, null, ["Requested HTTP resource is not found"]);
         }
         if ($exception instanceof QueryException) {
             $message = $exception->errorInfo[2];
@@ -50,14 +52,16 @@ class Handler extends ExceptionHandler
             if (isset($message) && strlen($message) > 0) {
                 array_push($errors, $message);
             }
-            return response()->common(422, null, $errors);
+            return response()->common(Response::HTTP_UNPROCESSABLE_ENTITY, null, $errors);
+        }
+        if ($exception instanceof ValidationException) {
+            return response()->common(Response::HTTP_BAD_REQUEST, null, $exception->validator->errors()->all());
         }
         $message = $exception->getMessage();
         $errors = [];
-        array_push($errors, get_class($exception));
         if (isset($message) && strlen($message) > 0) {
             array_push($errors, $message);
         }
-        return response()->common(500, null, $errors);
+        return response()->common(Response::HTTP_INTERNAL_SERVER_ERROR, null, $errors);
     }
 }

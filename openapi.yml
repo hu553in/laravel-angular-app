@@ -54,7 +54,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AddPublicTransportRequestBody"
+              $ref: "#/components/schemas/AddPublicTransportRequest"
       responses:
         "201":
           description: Success.
@@ -122,7 +122,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdatePublicTransportRequestBody"
+              $ref: "#/components/schemas/UpdatePublicTransportRequest"
       responses:
         "200":
           description: Success.
@@ -172,7 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignInRequestBody"
+              $ref: "#/components/schemas/SignInRequest"
       responses:
         "200":
           description: Success.
@@ -196,16 +196,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignUpRequestBody"
+              $ref: "#/components/schemas/SignUpRequest"
       responses:
         "201":
           description: Success.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignUpResponseBody"
+                $ref: "#/components/schemas/SignUpResponse"
         "400":
-          description: Invalid credentials.
+          description: Invalid request body.
         "500":
           description: Unknown error.
   /whoami:
@@ -276,10 +276,10 @@ components:
         updated_at:
           type: string
           format: date-time
-    AddPublicTransportRequestBody:
+    AddPublicTransportRequest:
       type: object
       description: |
-        Add public transport request body.\
+        Add public transport request.\
         The `type-route_number` pair must be unique.
       required:
         - type
@@ -306,10 +306,10 @@ components:
           type: string
           minLength: 1
           example: Пассажирское предприятие №8
-    UpdatePublicTransportRequestBody:
+    UpdatePublicTransportRequest:
       type: object
       description: |
-        Update public transport request body.\
+        Update public transport request.\
         The `type-route_number` pair must be unique.
       properties:
         type:
@@ -331,9 +331,9 @@ components:
           type: string
           minLength: 1
           example: Пассажирское предприятие №8
-    SignInRequestBody:
+    SignInRequest:
       type: object
-      description: Sign in request body.
+      description: Sign in request.
       required:
         - email
         - password
@@ -345,10 +345,10 @@ components:
           type: string
           minLength: 6
           example: zxcqwe123
-    SignUpRequestBody:
+    SignUpRequest:
       type: object
       description: |
-        Sign up request body.\
+        Sign up request.\
         'password' and 'password_confirmation' values must be the same.
       required:
         - name
@@ -371,9 +371,9 @@ components:
           type: string
           minLength: 6
           example: zxcqwe123
-    SignUpResponseBody:
+    SignUpResponse:
       type: object
-      description: Sign up response body.
+      description: Sign up response.
       required:
         - user
         - token
