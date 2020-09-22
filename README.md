@@ -18,6 +18,11 @@ You can explore it prettily rendered on
 [Swagger Editor](https://editor.swagger.io/?url=https://raw.githubusercontent.com/hu553in/laravel-angular-app/master/openapi.yml).\
 Also you can see it's source code in [./openapi.yml](./openapi.yml).
 
+## Important notice
+
+[./.env](./.env) file exists in the repository because of educational purposes of this project.\
+Consider uncomment it in [./.gitignore](./.gitignore) in real project.
+
 ## How to run
 
 ### Development
