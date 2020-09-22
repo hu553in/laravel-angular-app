@@ -6,9 +6,9 @@ info:
   description: |
     An API for the public transport CRUD app.\
     All responses are wrapped in the envelop:
-      - `statusCode` - integer value that represents HTTP response status code
-      - `error` - (nullable) string value that represents error message
-      - `data` - (nullable) value of specified schema type
+      - `statusCode` - an integer that represents HTTP response status code
+      - `errors` - an array of strings values that represent error messages
+      - `data` - a nullable value of specified schema type
   contact:
     email: r.m.khasanshin@gmail.com
 
@@ -56,6 +56,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
+        "400":
+          description: Invalid request body
         "500":
           description: Unknown error
   /public_transport/{id}:
@@ -94,6 +96,13 @@ paths:
           schema:
             type: integer
             minimum: 0
+      requestBody:
+        description: Update public transport request body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePublicTransportRequestBody"
       responses:
         "200":
           description: Success
@@ -101,6 +110,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
+        "400":
+          description: Invalid request body
         "404":
           description: Public transport is not found
         "500":
@@ -129,6 +140,9 @@ components:
   schemas:
     PublicTransport:
       type: object
+      description: |
+        Public transport model.\
+        The `type-route_number` pair must be unique.
       required:
         - id
         - type
@@ -139,28 +153,38 @@ components:
         - updated_at
       properties:
         id:
-          type: number
+          type: integer
           example: 12
         type:
           type: string
-          example: bus
+          enum:
+            - bus
+            - route_taxi
+            - tram
+            - trolleybus
         route_number:
           type: string
+          minLength: 1
           example: 32г
         capacity:
-          type: number
+          type: integer
+          minimum: 1
           example: 50
         organization_name:
           type: string
+          minLength: 1
           example: Пассажирское предприятие №8
         created_at:
           type: string
-          example: "2020-09-21T08:41:28.000000Z"
+          format: date-time
         updated_at:
           type: string
-          example: "2020-09-21T08:41:28.000000Z"
+          format: date-time
     AddPublicTransportRequestBody:
       type: object
+      description: |
+        Add public transport request body.\
+        The `type-route_number` pair must be unique.
       required:
         - type
         - route_number
@@ -169,13 +193,45 @@ components:
       properties:
         type:
           type: string
-          example: bus
+          enum:
+            - bus
+            - route_taxi
+            - tram`
+            - trolleybus
         route_number:
           type: string
+          minLength: 1
           example: 32г
         capacity:
-          type: number
+          type: integer
+          minimum: 1
           example: 50
         organization_name:
           type: string
+          minLength: 1
+          example: Пассажирское предприятие №8
+    UpdatePublicTransportRequestBody:
+      type: object
+      description: |
+        Update public transport request body.\
+        The `type-route_number` pair must be unique.
+      properties:
+        type:
+          type: string
+          enum:
+            - bus
+            - route_taxi
+            - tram
+            - trolleybus
+        route_number:
+          type: string
+          minLength: 1
+          example: 32г
+        capacity:
+          type: integer
+          minimum: 1
+          example: 50
+        organization_name:
+          type: string
+          minLength: 1
           example: Пассажирское предприятие №8

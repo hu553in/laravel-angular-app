@@ -16,13 +16,23 @@ class PublicTransportTableSeeder extends Seeder
     public function run()
     {
         PublicTransport::truncate();
+        $publicTransportTypes = config('constants.public_transport_types');
         $faker = Factory::create();
+        $arrayOfRouteNumbersWithTypes = [];
         for ($i = 0; $i < 25; $i++) {
-            $route_number_number = $faker->unique()->numberBetween(1, 100);
-            $route_number_letter = $faker->optional(0.5, "")->randomLetter();
+            $isUnique = function($newRouteNumber, $newType) use ($arrayOfRouteNumbersWithTypes) {
+                return !in_array("{$newRouteNumber}-{$newType}", $arrayOfRouteNumbersWithTypes);
+            };
+            $routeNumber = null;
+            $type = null;
+            do {
+                $routeNumber = "{$faker->numberBetween(1, 100)}{$faker->optional(0.5, "")->randomLetter()}";
+                $type = $faker->randomElement($publicTransportTypes);
+            } while (!$isUnique($routeNumber, $type));
+            array_push($arrayOfRouteNumbersWithTypes, "{$routeNumber}-{$type}");
             PublicTransport::create([
-                'type' => $faker->word(),
-                'route_number' => "{$route_number_number}{$route_number_letter}",
+                'type' => $type,
+                'route_number' => $routeNumber,
                 'capacity' => $faker->numberBetween(10, 100),
                 'organization_name' => $faker->company(),
             ]);
