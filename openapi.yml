@@ -5,22 +5,30 @@ info:
   version: "1.0.0"
   description: |
     An API for the public transport CRUD app.\
+    \
+    Authentication process is built using JSON Web Tokens.\
+    Token can be passed in `Authorization` header
+    (with `Bearer` prefix) or in `token` query parameter.\
+    \
     All responses are wrapped in the envelop:
-      - `statusCode` - an integer that represents HTTP response status code
-      - `errors` - an array of strings values that represent error messages
-      - `data` - a nullable value of specified schema type
+      - `statusCode` - an integer that represents HTTP response status code;
+      - `errors` - an array of strings values that represent error messages;
+      - `data` - a nullable value of specified schema type.
   contact:
     email: r.m.khasanshin@gmail.com
 
 tags:
   - name: Public transport
+  - name: User
 
 paths:
   /public_transport:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - Public transport
-      summary: Get all public transport
+      summary: Get all public transport.
       responses:
         "200":
           description: Success
@@ -30,14 +38,18 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/PublicTransport"
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "500":
           description: Unknown error
     post:
+      security:
+        - bearerAuth: []
       tags:
         - Public transport
-      summary: Add public transport
+      summary: Add public transport.
       requestBody:
-        description: Add public transport request body
+        description: Add public transport request body.
         required: true
         content:
           application/json:
@@ -45,10 +57,10 @@ paths:
               $ref: "#/components/schemas/AddPublicTransportRequestBody"
       responses:
         "201":
-          description: Success
+          description: Success.
           headers:
             Location:
-              description: Added public transport URL (relative to API URL)
+              description: Added public transport URL (relative to API URL).
               schema:
                 type: string
                 example: /public_transport/12
@@ -57,47 +69,55 @@ paths:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
         "400":
-          description: Invalid request body
+          description: Invalid request body.
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "500":
-          description: Unknown error
+          description: Unknown error.
   /public_transport/{id}:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - Public transport
-      summary: Get public transport by ID
+      summary: Get public transport by ID.
       parameters:
         - in: path
           name: id
-          description: Public transport ID
+          description: Public transport ID.
           required: true
           schema:
             type: integer
             minimum: 0
       responses:
         "200":
-          description: Success
+          description: Success.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "404":
-          description: Public transport is not found
+          description: Public transport is not found.
         "500":
-          description: Unknown error
+          description: Unknown error.
     put:
+      security:
+        - bearerAuth: []
       tags:
         - Public transport
-      summary: Update public transport by ID
+      summary: Update public transport by ID.
       parameters:
         - in: path
           name: id
-          description: Public transport ID
+          description: Public transport ID.
           required: true
           schema:
             type: integer
             minimum: 0
       requestBody:
-        description: Update public transport request body
+        description: Update public transport request body.
         required: true
         content:
           application/json:
@@ -105,38 +125,114 @@ paths:
               $ref: "#/components/schemas/UpdatePublicTransportRequestBody"
       responses:
         "200":
-          description: Success
+          description: Success.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
         "400":
-          description: Invalid request body
+          description: Invalid request body.
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "404":
-          description: Public transport is not found
+          description: Public transport is not found.
         "500":
-          description: Unknown error
+          description: Unknown error.
     delete:
+      security:
+        - bearerAuth: []
       tags:
         - Public transport
-      summary: Delete public transport by ID
+      summary: Delete public transport by ID.
       parameters:
         - in: path
           name: id
-          description: Public transport ID
+          description: Public transport ID.
           required: true
           schema:
             type: integer
             minimum: 0
       responses:
         "204":
-          description: Success
+          description: Success.
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "404":
-          description: Public transport is not found
+          description: Public transport is not found.
         "500":
-          description: Unknown error
+          description: Unknown error.
+  /sign_in:
+    post:
+      tags:
+        - User
+      summary: Sign in.
+      requestBody:
+        description: Sign in request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInRequestBody"
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6OTkyMFwvYXBpXC9zaWduX2luIiwiaWF0IjoxNjAwNzc3MzE2LCJleHAiOjE2MDA3ODA5MTYsIm5iZiI6MTYwMDc3NzMxNiwianRpIjoiVG1Va2R0eUhUZU9yRUhNWCIsInN1YiI6MywicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.cp8WuCb3qCm7aKCTn4yznOxzjzI1fGKAKmOjfe02_bU
+        "400":
+          description: Invalid credentials.
+        "500":
+          description: Unknown error.
+  /sign_up:
+    post:
+      tags:
+        - User
+      summary: Sign up.
+      requestBody:
+        description: Sign up request body.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpRequestBody"
+      responses:
+        "201":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpResponseBody"
+        "400":
+          description: Invalid credentials.
+        "500":
+          description: Unknown error.
+  /whoami:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      summary: Whoami.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+        "500":
+          description: Unknown error.
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     PublicTransport:
       type: object
@@ -235,3 +331,69 @@ components:
           type: string
           minLength: 1
           example: Пассажирское предприятие №8
+    SignInRequestBody:
+      type: object
+      description: Sign in request body.
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+          example: zxcqwe123
+    SignUpRequestBody:
+      type: object
+      description: |
+        Sign up request body.\
+        'password' and 'password_confirmation' values must be the same.
+      required:
+        - name
+        - email
+        - password
+        - password_confirmation
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: John
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+          example: zxcqwe123
+        password_confirmation:
+          type: string
+          minLength: 6
+          example: zxcqwe123
+    SignUpResponseBody:
+      type: object
+      description: Sign up response body.
+      required:
+        - user
+        - token
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6OTkyMFwvYXBpXC9zaWduX2luIiwiaWF0IjoxNjAwNzc3MzE2LCJleHAiOjE2MDA3ODA5MTYsIm5iZiI6MTYwMDc3NzMxNiwianRpIjoiVG1Va2R0eUhUZU9yRUhNWCIsInN1YiI6MywicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.cp8WuCb3qCm7aKCTn4yznOxzjzI1fGKAKmOjfe02_bU
+    User:
+      type: object
+      description: User model.
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: John
+        email:
+          type: string
+          format: email

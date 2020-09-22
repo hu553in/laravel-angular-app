@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\PublicTransportController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,16 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+Route::post('sign_up', [UserController::class, 'signUp']);
+Route::post('sign_in', [UserController::class, 'signIn']);
 
-Route::get('public_transport', [PublicTransportController::class, 'getAll']);
-
-Route::get('public_transport/{public_transport}', [PublicTransportController::class, 'get']);
-
-Route::post('public_transport', [PublicTransportController::class, 'add']);
-
-Route::put('public_transport/{public_transport}', [PublicTransportController::class, 'update']);
-
-Route::delete('public_transport/{public_transport}', [PublicTransportController::class, 'delete']);
+Route::group(['middleware' => ['jwt.authenticate']], function () {
+    Route::get('whoami', [UserController::class, 'whoami']);
+    Route::get('public_transport', [PublicTransportController::class, 'getAll']);
+    Route::get('public_transport/{public_transport}', [PublicTransportController::class, 'get']);
+    Route::post('public_transport', [PublicTransportController::class, 'add']);
+    Route::put('public_transport/{public_transport}', [PublicTransportController::class, 'update']);
+    Route::delete('public_transport/{public_transport}', [PublicTransportController::class, 'delete']);
+});

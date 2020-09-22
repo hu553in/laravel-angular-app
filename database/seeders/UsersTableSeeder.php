@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,16 +16,15 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         User::truncate();
-        $faker = Factory::create();
         User::create([
             'name' => 'admin',
             'email' => 'admin@gmail.com',
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('admin_password'),
         ]);
         User::create([
             'name' => 'user',
             'email' => 'user@gmail.com',
-            'password' => Hash::make('user'),
+            'password' => Hash::make('user_password'),
         ]);
     }
 }

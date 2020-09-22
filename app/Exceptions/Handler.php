@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -40,6 +41,9 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ModelNotFoundException) {
             return response()->common(404, null, ["Requested resource is not found"]);
         }
+        if ($exception instanceof NotFoundHttpException) {
+            return response()->common(404, null, ["Requested HTTP resource is not found"]);
+        }
         if ($exception instanceof QueryException) {
             $message = $exception->errorInfo[2];
             $errors = [];
@@ -50,6 +54,7 @@ class Handler extends ExceptionHandler
         }
         $message = $exception->getMessage();
         $errors = [];
+        array_push($errors, get_class($exception));
         if (isset($message) && strlen($message) > 0) {
             array_push($errors, $message);
         }
