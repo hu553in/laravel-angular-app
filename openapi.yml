@@ -196,7 +196,7 @@ components:
           enum:
             - bus
             - route_taxi
-            - tram`
+            - tram
             - trolleybus
         route_number:
           type: string
