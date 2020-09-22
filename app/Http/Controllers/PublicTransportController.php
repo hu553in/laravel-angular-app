@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PublicTransport\AddRequest;
-use App\Http\Requests\PublicTransport\UpdateRequest;
+use App\Http\Requests\PublicTransport\AddPublicTransportRequest;
+use App\Http\Requests\PublicTransport\UpdatePublicTransportRequest;
 use App\Models\PublicTransport;
 use App\Services\PublicTransportService;
 use Illuminate\Http\Response;
@@ -20,15 +20,18 @@ class PublicTransportController extends Controller
         return response()->common(Response::HTTP_OK, $publicTransport);
     }
 
-    public function add(AddRequest $request, PublicTransportService $service)
+    public function add(AddPublicTransportRequest $request, PublicTransportService $service)
     {
         $publicTransport = $service->add($request->all());
         $headers = ['Location' => "/public_transport/{$publicTransport->id}"];
         return response()->common(Response::HTTP_CREATED, $publicTransport, [], $headers);
     }
 
-    public function update(UpdateRequest $request, PublicTransport $publicTransport, PublicTransportService $service)
-    {
+    public function update(
+        UpdatePublicTransportRequest $request,
+        PublicTransport $publicTransport,
+        PublicTransportService $service
+    ) {
         return response()->common(
             Response::HTTP_OK,
             $service->update($request->all(), $publicTransport)

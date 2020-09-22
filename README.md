@@ -21,6 +21,7 @@ Also you can see it's source code in [./openapi.yml](./openapi.yml).
 ## Important notice
 
 [./.env](./.env) file exists in the repository because of educational purposes of this project.\
+It contains several important secrets.\
 Consider uncomment it in [./.gitignore](./.gitignore) in real project.
 
 ## How to run
