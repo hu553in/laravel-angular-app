@@ -4,11 +4,11 @@ info:
   title: Public transport
   version: "1.0.0"
   description: |
-    API for public transport CRUD app.
+    An API for the public transport CRUD app.\
     All responses are wrapped in the envelop:
-      - `statusCode` - integer that represents HTTP response status code
-      - `error` - nullable string that represents error message
-      - `data` - nullable value of specified schema type
+      - `statusCode` - integer value that represents HTTP response status code
+      - `error` - (nullable) string value that represents error message
+      - `data` - (nullable) value of specified schema type
   contact:
     email: r.m.khasanshin@gmail.com
 
@@ -37,7 +37,8 @@ paths:
         - Public transport
       summary: Add public transport
       requestBody:
-        description: Request body
+        description: Add public transport request body
+        required: true
         content:
           application/json:
             schema:
@@ -65,11 +66,34 @@ paths:
       parameters:
         - in: path
           name: id
+          description: Public transport ID
           required: true
           schema:
             type: integer
             minimum: 0
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicTransport"
+        "404":
+          description: Public transport is not found
+        "500":
+          description: Unknown error
+    put:
+      tags:
+        - Public transport
+      summary: Update public transport by ID
+      parameters:
+        - in: path
+          name: id
           description: Public transport ID
+          required: true
+          schema:
+            type: integer
+            minimum: 0
       responses:
         "200":
           description: Success
@@ -84,41 +108,18 @@ paths:
     delete:
       tags:
         - Public transport
-      summary: Delete public transport
+      summary: Delete public transport by ID
       parameters:
         - in: path
           name: id
+          description: Public transport ID
           required: true
           schema:
             type: integer
             minimum: 0
-          description: Public transport ID
       responses:
         "204":
           description: Success
-        "404":
-          description: Public transport is not found
-        "500":
-          description: Unknown error
-    put:
-      tags:
-        - Public transport
-      summary: Update public transport
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-            minimum: 0
-          description: Public transport ID
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PublicTransport"
         "404":
           description: Public transport is not found
         "500":
@@ -128,6 +129,14 @@ components:
   schemas:
     PublicTransport:
       type: object
+      required:
+        - id
+        - type
+        - route_number
+        - capacity
+        - organization_name
+        - created_at
+        - updated_at
       properties:
         id:
           type: number
@@ -152,6 +161,11 @@ components:
           example: "2020-09-21T08:41:28.000000Z"
     AddPublicTransportRequestBody:
       type: object
+      required:
+        - type
+        - route_number
+        - capacity
+        - organization_name
       properties:
         type:
           type: string
