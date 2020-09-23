@@ -47,8 +47,9 @@ services:
         chown -R laravel_angular_app:laravel_angular_app . &&
         composer install &&
         /opt/wait-for-it.sh -t 0 db:3306 &&
-        php artisan migrate &&
-        php artisan db:seed &&
+        php artisan config:clear &&
+        php artisan cache:clear &&
+        php artisan config:cache &&
         php-fpm
       '
     networks:
