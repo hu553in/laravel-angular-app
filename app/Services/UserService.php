@@ -10,6 +10,12 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserService
 {
+    /**
+     * Form auth data object.
+     *
+     * @param  string  $token
+     * @return array
+     */
     private function formAuthDataObject(string $token)
     {
         return [
@@ -19,6 +25,14 @@ class UserService
         ];
     }
 
+    /**
+     * Sign in.
+     *
+     * @param  array  $credentials
+     * @return array
+     *
+     * @throws \App\Exceptions\InvalidCredentialsException
+     */
     public function signIn(array $credentials)
     {
         if (!$token = JWTAuth::attempt($credentials)) {
@@ -27,6 +41,14 @@ class UserService
         return $this->formAuthDataObject($token);
     }
 
+    /**
+     * Sign up.
+     *
+     * @param  string  $name
+     * @param  string  $email
+     * @param  string  $password
+     * @return array
+     */
     public function signUp(string $name, string $email, string $password)
     {
         $user = User::create([
@@ -41,6 +63,11 @@ class UserService
         ];
     }
 
+    /**
+     * Whoami.
+     *
+     * @return mixed
+     */
     public function whoami()
     {
         if (!$user = JWTAuth::parseToken()->authenticate()) {

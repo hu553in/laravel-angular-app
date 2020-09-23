@@ -21,8 +21,19 @@ class PublicTransport extends Model
         'organization_name',
     ];
 
+    /**
+     * The name of related database table.
+     *
+     * @var string
+     */
     protected $table = 'public_transport';
 
+    /**
+     * Get ID ("id") attribute.
+     *
+     * @param  int  $id
+     * @return int
+     */
     public function getIdAttribute(int $id)
     {
         return $id;

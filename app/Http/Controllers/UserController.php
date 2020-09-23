@@ -11,6 +11,13 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+    /**
+     * Sign in.
+     *
+     * @param  \App\Http\Requests\User\SignInRequest  $request
+     * @param  \App\Services\UserService  $service
+     * @return \Illuminate\Http\Response
+     */
     public function signIn(SignInRequest $request, UserService $service)
     {
         try {
@@ -27,6 +34,13 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * Sign up.
+     *
+     * @param  \App\Http\Requests\User\SignUpRequest  $request
+     * @param  \App\Services\UserService  $service
+     * @return \Illuminate\Http\Response
+     */
     public function signUp(SignUpRequest $request, UserService $service)
     {
         return response()->common(
@@ -39,6 +53,13 @@ class UserController extends Controller
         );
     }
 
+
+    /**
+     * Whoami.
+     *
+     * @param  \App\Services\UserService  $service
+     * @return \Illuminate\Http\Response
+     */
     public function whoami(UserService $service)
     {
         try {
