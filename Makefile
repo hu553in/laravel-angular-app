@@ -19,3 +19,8 @@ generateSecrets:
 prepareDatabase:
 	docker-compose exec api sh -c \
 	'php artisan migrate:fresh --seed'
+
+.PHONY: runTests
+runTests:
+	docker-compose exec api sh -c \
+	'php artisan test'

@@ -27,7 +27,8 @@ Also you can see it's source code in [./openapi.yml](./openapi.yml).
 named `./gui` (e.g. `ln -rs ../laravel-angular-app-gui ./gui`)
 3. Run `make createDotEnvForDocker` in case if you want to (re-)create `./.env` file
 4. Run `make run`
-4. Run `make generateSecrets` in the another terminal window in case if you want to (re-)generate several app secrets in `./.env` file
+5. Run `make generateSecrets` in the another terminal window in case if you want to (re-)generate several app secrets in `./.env` file
 6. Run `make prepareDatabase` in the another terminal window in case if you want to (re-)migrate and (re-)seed the database
+7. Run `make runTests` in the another terminal window in case if you want to run unit and feature tests
 
-**Note:** You must definitely do steps 5-6 in case if you haven't run them before in your current environment.
+**Note:** You definitely must do steps 5-6 in case if you haven't run them before in your current environment.
