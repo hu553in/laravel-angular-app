@@ -10,6 +10,11 @@ info:
     Token can be passed in `Authorization` header
     (with `Bearer` prefix) or in `token` query parameter.\
     \
+    When the token expires, the refreshed token is automatically set
+    to the response headers (`token`, `token_type`, `expires_in`)
+    for the request made with the expired token. The client must check for
+    the presence of these response headers and react to their appearance.\
+    \
     All responses are wrapped in the envelop:
       - `statusCode` - an integer that represents HTTP response status code;
       - `errors` - an array of strings values that represent error messages;
