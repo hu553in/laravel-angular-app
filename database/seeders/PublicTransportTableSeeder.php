@@ -17,6 +17,11 @@ class PublicTransportTableSeeder extends Seeder
     {
         PublicTransport::truncate();
         $publicTransportTypes = config('constants.public_transport_types');
+        $organizationNames = [
+            'Company #1',
+            'Company #2',
+            'Company #3',
+        ];
         $faker = Factory::create();
         $arrayOfRouteNumbersWithTypes = [];
         for ($i = 0; $i < 25; $i++) {
@@ -34,7 +39,7 @@ class PublicTransportTableSeeder extends Seeder
                 'type' => $type,
                 'route_number' => $routeNumber,
                 'capacity' => $faker->numberBetween(10, 100),
-                'organization_name' => $faker->company(),
+                'organization_name' => $faker->randomElement($organizationNames),
             ]);
         }
     }

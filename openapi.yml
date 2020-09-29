@@ -8,7 +8,7 @@ info:
     \
     Authentication process is built using JSON Web Tokens.\
     Token can be passed in `Authorization` header
-    (with `Bearer` prefix) or in `token` query parameter.\
+    (with `Bearer` prefix separated by the whitespace) or in `token` query parameter.\
     \
     When the token expires, the refreshed token is automatically set
     to the response headers (`token`, `token_type`, `expires_in`)
@@ -34,15 +34,80 @@ paths:
       tags:
         - Public transport
       summary: Get all public transport.
+      parameters:
+        - in: query
+          name: page
+          description: Page number.
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: rows
+          description: Rows count.
+          schema:
+            type: integer
+            minimum: 1
+            default: 25
+        - in: query
+          name: sort_by[]
+          description: |
+            Column to sort by.\
+            Can be repeated to sort by several columns.\
+            Must have the same length as 'order[]' param.
+          schema:
+            type: string
+            default: id
+            enum:
+              - id
+              - type
+              - route_number
+              - capacity
+              - organization_name
+              - created_at
+              - updated_at
+        - in: query
+          name: order[]
+          description: |
+            Sorting order.\
+            Can be repeated to sort by several columns.\
+            Must have the same length as 'sort_by[]' param.
+          schema:
+            type: string
+            default: asc
+            enum:
+              - asc
+              - desc
+        - in: query
+          name: type[]
+          description: |
+            Type to filter by.\
+            Can be repeated to filter by several types.
+          schema:
+            type: string
+            example: trolleybus
+        - in: query
+          name: organization_name[]
+          description: |
+            Organization name to filter by.\
+            Can be repeated to filter by several organization names.
+          schema:
+            type: string
+            example: "Company #1"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PublicTransport"
+                type: object
+                properties:
+                  _meta:
+                    $ref: "#/components/schemas/MetaObject"
+                  paginated_data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PublicTransport"
         "401":
           description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "500":
@@ -417,3 +482,39 @@ components:
         expires_in:
           type: integer
           example: 3600
+    MetaObject:
+      type: object
+      description: An object which contains pagination-related meta-information.
+      required:
+        - total
+        - total_pages
+        - rows
+      properties:
+        total:
+          type: integer
+          minimum: 0
+          example: 100
+        total_pages:
+          type: integer
+          minimum: 0
+          example: 4
+        page:
+          type: integer
+          minimum: 1
+          example: 2
+        rows:
+          type: integer
+          minimum: 1
+          example: 25
+        next:
+          type: string
+          example: "/public_transport?page=3&rows=25&sort_by[]=id&order[]=asc"
+        prev:
+          type: string
+          example: "/public_transport?page=1&rows=25&sort_by[]=id&order[]=asc"
+        first:
+          type: string
+          example: "/public_transport?page=1&rows=25&sort_by[]=id&order[]=asc"
+        last:
+          type: string
+          example: "/public_transport?page=4&rows=25&sort_by[]=id&order[]=asc"

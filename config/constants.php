@@ -9,4 +9,14 @@ return [
         'trolleybus',
     ],
 
+    'default_pagination_params' => [
+        'page' => 1,
+        'rows' => 25,
+    ],
+
+    'default_sorting_params' => [
+        'sort_by' => ['id'],
+        'order' => ['asc'],
+    ]
+
 ];

@@ -15,6 +15,11 @@ generateSecrets:
 	docker-compose exec api sh -c \
 	'php artisan key:generate && php artisan jwt:secret -f'
 
+.PHONY: reconfigure
+reconfigure:
+	docker-compose exec api sh -c \
+	'php artisan config:clear && php artisan cache:clear && php artisan config:cache'
+
 .PHONY: prepareDatabase
 prepareDatabase:
 	docker-compose exec api sh -c \
