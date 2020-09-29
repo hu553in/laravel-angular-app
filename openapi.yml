@@ -497,24 +497,24 @@ components:
         total_pages:
           type: integer
           minimum: 0
-          example: 4
+          example: 100
         page:
           type: integer
           minimum: 1
-          example: 2
+          example: 13
         rows:
           type: integer
           minimum: 1
-          example: 25
+          example: 1
         next:
           type: string
-          example: "/public_transport?page=3&rows=25&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=14&rows=1&sort_by[]=id&order[]=asc"
         prev:
           type: string
-          example: "/public_transport?page=1&rows=25&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=12&rows=1&sort_by[]=id&order[]=asc"
         first:
           type: string
-          example: "/public_transport?page=1&rows=25&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=1&rows=1&sort_by[]=id&order[]=asc"
         last:
           type: string
-          example: "/public_transport?page=4&rows=25&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=100&rows=1&sort_by[]=id&order[]=asc"
