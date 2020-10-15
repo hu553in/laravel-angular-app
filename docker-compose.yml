@@ -57,13 +57,21 @@ services:
     networks:
       - laravel_angular_app_tier
   ui:
-    image: node:alpine
+    build:
+      context: .
+      dockerfile: ./docker/ui.dockerfile
     container_name: ui
     restart: unless-stopped
     volumes:
       - ./gui:/opt/laravel_angular_app
     working_dir: /opt/laravel_angular_app
-    command: sh -c 'npm i && npx ng serve --host 0.0.0.0 --publicHost ui'
+    user: laravel_angular_app
+    command: >
+      sh -c '
+        chown -R laravel_angular_app:laravel_angular_app . &&
+        npm i &&
+        npx ng serve --host 0.0.0.0 --publicHost ui
+      '
     networks:
       - laravel_angular_app_tier
 
