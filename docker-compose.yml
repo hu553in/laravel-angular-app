@@ -62,6 +62,8 @@ services:
       dockerfile: ./docker/ui.dockerfile
     container_name: ui
     restart: unless-stopped
+    depends_on:
+      - api
     volumes:
       - ./gui:/opt/laravel_angular_app
     working_dir: /opt/laravel_angular_app
