@@ -22,10 +22,16 @@ reconfigure:
 
 .PHONY: prepareDatabase
 prepareDatabase:
-	docker-compose exec api sh -c \
-	'php artisan migrate:fresh --seed'
+	docker-compose exec api sh -c 'php artisan migrate:fresh --seed'
 
-.PHONY: runTests
-runTests:
-	docker-compose exec api sh -c \
-	'php artisan test'
+.PHONY: runTestsBackend
+runTestsBackend:
+	docker-compose exec api sh -c 'php artisan test'
+
+.PHONY: runTestsFrontendCommon
+runTestsFrontendCommon:
+	docker-compose exec ui sh -c 'npx ng test'
+
+.PHONY: runTestsFrontendEndToEnd
+runTestsFrontendEndToEnd:
+	docker-compose exec ui sh -c 'npx ng e2e --port 4300'

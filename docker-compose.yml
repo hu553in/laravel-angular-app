@@ -68,6 +68,8 @@ services:
       - ./gui:/opt/laravel_angular_app
     working_dir: /opt/laravel_angular_app
     user: laravel_angular_app
+    ports:
+      - "9876:9876" # test results
     command: >
       sh -c '
         chown -R laravel_angular_app:laravel_angular_app . &&
