@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -22,29 +23,38 @@ class JwtMiddleware extends BaseMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $respondUnauthorized = function (string $error) {
-            return response()->common(Response::HTTP_UNAUTHORIZED, null, [$error]);
-        };
         $response = $next($request);
         try {
             if (!JWTAuth::parseToken()->authenticate()) {
-                return $respondUnauthorized("Unable to authenticate user by token");
-            }
-        } catch (TokenExpiredException $e) {
-            try {
-                $refreshedToken = JWTAuth::refresh(JWTAuth::getToken());
-                JWTAuth::setToken($refreshedToken)->toUser();
-                $response->header('token', $refreshedToken);
-                $response->header('token_type', 'bearer');
-                $response->header('expires_in', JWTAuth::factory()->getTTL() * 60);
-            } catch (JWTException $e) {
-                return $respondUnauthorized("Token has expired and can not be refreshed");
+                return $this->respondUnauthorized("Unable to authenticate user by token");
             }
         } catch (TokenInvalidException $e) {
-            return $respondUnauthorized("Token is invalid");
+            return $this->respondUnauthorized("Token is invalid");
         } catch (JWTException $e) {
-            return $respondUnauthorized("Unable to authenticate user by token");
+            if ($e instanceof TokenExpiredException || $e instanceof TokenBlacklistedException) {
+                try {
+                    $refreshedToken = JWTAuth::refresh(JWTAuth::getToken());
+                    JWTAuth::setToken($refreshedToken)->toUser();
+                    $response->header('token', $refreshedToken);
+                    $response->header('token_type', 'bearer');
+                    $response->header('expires_in', JWTAuth::factory()->getTTL() * 60);
+                } catch (JWTException $e) {
+                    return $this->respondUnauthorized("Token has expired and can not be refreshed");
+                }
+            } else {
+                return $this->respondUnauthorized("Unable to authenticate user by token");
+            }
         }
         return $response;
+    }
+
+    /**
+     * Respond with "401 Unauthorized" status.
+     *
+     * @param  string  $error
+     * @return mixed
+     */
+    private function respondUnauthorized(string $error) {
+        return response()->common(Response::HTTP_UNAUTHORIZED, null, [$error]);
     }
 }

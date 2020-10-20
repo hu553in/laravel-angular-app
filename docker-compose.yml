@@ -23,14 +23,12 @@ services:
     restart: unless-stopped
     depends_on:
       - api
-      - ui
     volumes:
       - .:/opt/laravel_angular_app:ro
       - ./docker/nginx:/etc/nginx/conf.d:ro
     networks:
       - laravel_angular_app_tier
     ports:
-      - "9910:9910"
       - "9920:9920"
   api:
     build:
@@ -69,12 +67,13 @@ services:
     working_dir: /opt/laravel_angular_app
     user: laravel_angular_app
     ports:
+      - "4200:4200" # webpack dev server
       - "9876:9876" # test results
     command: >
       sh -c '
         chown -R laravel_angular_app:laravel_angular_app . &&
         npm i &&
-        npx ng serve --host 0.0.0.0 --publicHost ui
+        npx ng serve --host 0.0.0.0
       '
     networks:
       - laravel_angular_app_tier

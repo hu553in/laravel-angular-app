@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrganizationNameController;
 use App\Http\Controllers\PublicTransportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,5 @@ Route::group(['middleware' => ['jwt.authenticate']], function () {
     Route::post('public_transport', [PublicTransportController::class, 'add']);
     Route::put('public_transport/{public_transport}', [PublicTransportController::class, 'update']);
     Route::delete('public_transport/{public_transport}', [PublicTransportController::class, 'delete']);
+    Route::get('organization_name', [OrganizationNameController::class, 'getAll']);
 });

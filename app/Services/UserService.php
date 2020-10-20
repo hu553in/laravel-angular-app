@@ -38,7 +38,12 @@ class UserService
         if (!$token = JWTAuth::attempt($credentials)) {
             throw new InvalidCredentialsException();
         }
-        return $this->formAuthDataObject($token);
+        $user = JWTAuth::user();
+        unset($user->email_verified_at);
+        return [
+            'user' => $user,
+            'auth_data' => $this->formAuthDataObject($token),
+        ];
     }
 
     /**

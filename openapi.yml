@@ -25,6 +25,7 @@ info:
 tags:
   - name: Public transport
   - name: User
+  - name: Organization name
 
 paths:
   /public_transport:
@@ -50,11 +51,8 @@ paths:
             minimum: 1
             default: 25
         - in: query
-          name: sort_by[]
-          description: |
-            Column to sort by.\
-            Can be repeated to sort by several columns.\
-            Must have the same length as 'order[]' param.
+          name: sort_by
+          description: Column to sort by.
           schema:
             type: string
             default: id
@@ -67,11 +65,8 @@ paths:
               - created_at
               - updated_at
         - in: query
-          name: order[]
-          description: |
-            Sorting order.\
-            Can be repeated to sort by several columns.\
-            Must have the same length as 'sort_by[]' param.
+          name: order
+          description: Sorting order.
           schema:
             type: string
             default: asc
@@ -249,7 +244,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthDataObject'
+                $ref: '#/components/schemas/SignInResponse'
         "400":
           description: Invalid credentials.
         "500":
@@ -291,6 +286,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+        "500":
+          description: Unknown error.
+  /organization_name:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Organization name
+      summary: Get all organization names.
+      responses:
+        "200":
+          description: Success.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: "Company #1"
         "401":
           description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
         "500":
@@ -440,6 +456,17 @@ components:
           type: string
           minLength: 6
           example: zxcqwe123
+    SignInResponse:
+      type: object
+      description: Sign in response.
+      required:
+        - user
+        - token
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        auth_data:
+          $ref: '#/components/schemas/AuthDataObject'
     SignUpResponse:
       type: object
       description: Sign up response.
@@ -508,13 +535,13 @@ components:
           example: 1
         next:
           type: string
-          example: "/public_transport?page=14&rows=1&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=14&rows=1&sort_by=id&order=asc&type[]=bus"
         prev:
           type: string
-          example: "/public_transport?page=12&rows=1&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=12&rows=1&sort_by=id&order=asc&type[]=bus"
         first:
           type: string
-          example: "/public_transport?page=1&rows=1&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=1&rows=1&sort_by=id&order=asc&type[]=bus"
         last:
           type: string
-          example: "/public_transport?page=100&rows=1&sort_by[]=id&order[]=asc"
+          example: "/public_transport?page=100&rows=1&sort_by=id&order=asc&type[]=bus"

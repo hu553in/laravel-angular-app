@@ -24,22 +24,16 @@ class PublicTransportController extends Controller
         $defaultSortingParams = config('constants.default_sorting_params');
         $sortBy = $request['sort_by'] ?? $defaultSortingParams['sort_by'];
         $order = $request['order'] ?? $defaultSortingParams['order'];
-        if (count($sortBy) !== count($order)) {
-            return response()->common(400, null, [
-                'Lengths of \'sortBy\' and \'order\' arrays must be equal.',
-            ]);
-        }
-        $sortingParams = array_combine($sortBy, $order);
         $rows = isset($request['rows'])
             ? intval($request['rows'])
             : $defaultPaginationParams['rows'];
-        $types = isset($request['type'])
-            ? array_filter($request['type'])
-            : [];
-        $organizationNames = isset($request['organization_name'])
-            ? array_filter($request['organization_name'])
-            : [];
-        $metaTotal = $service->countAll($types, $organizationNames);
+            $types = isset($request['type'])
+                ? array_filter($request['type'])
+                : [];
+            $organizationNames = isset($request['organization_name'])
+                ? array_filter($request['organization_name'])
+                : [];
+            $metaTotal = $service->countAll($types, $organizationNames);
         $metaLast = intval(ceil(floatval($metaTotal) / $rows));
         if (isset($request['page'])) {
             $rawPage = intval($request['page']);
@@ -49,19 +43,15 @@ class PublicTransportController extends Controller
         } else {
             $page = $defaultPaginationParams['page'];
         }
-        $paginatedData = $service->getAll($types, $organizationNames, $sortingParams, $page, $rows);
+        $paginatedData = $service->getAll($types, $organizationNames, $sortBy, $order, $page, $rows);
         $metaNext = $page < $metaLast
             ? $page + 1
             : $metaLast;
         $metaPrev = $page > 1
             ? $page - 1
             : 1;
-        $metaSortBy = array_reduce($sortBy, function ($carry, $item) {
-            return $carry . "&sort_by[]={$item}";
-        }, '');
-        $metaOrder = array_reduce($order, function ($carry, $item) {
-            return $carry . "&order[]={$item}";
-        }, '');
+        $metaSortBy = "&sort_by={$sortBy}";
+        $metaOrder = "&order={$order}";
         $metaType = array_reduce($types, function ($carry, $item) {
             return $carry . "&type[]={$item}";
         }, '');

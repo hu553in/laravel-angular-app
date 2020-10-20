@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\PublicTransport\GetAllPublicTransportRequest;
 use App\Models\PublicTransport;
 use Illuminate\Support\Facades\DB;
 
@@ -13,13 +12,13 @@ class PublicTransportService
      *
      * @param  array  $types
      * @param  array  $organizationNames
-     * @param  array  $sortBy
+     * @param  string  $sortBy
      * @param  string  $order
      * @param  int  $page
      * @param  int  $rows
      * @return \Illuminate\Support\Collection
      */
-    public function getAll(array $types, array $organizationNames, array $sortingParams, int $page, int $rows)
+    public function getAll(array $types, array $organizationNames, string $sortBy, string $order, int $page, int $rows)
     {
         $query = DB::table('public_transport');
         if (!empty($types)) {
@@ -28,9 +27,7 @@ class PublicTransportService
         if (!empty($organizationNames)) {
             $query->whereIn('organization_name', $organizationNames);
         }
-        foreach ($sortingParams as $sortBy => $order) {
-            $query->orderBy($sortBy, $order);
-        }
+        $query->orderBy($sortBy, $order);
         return $query
             ->skip(($page - 1) * $rows)
             ->take($rows)

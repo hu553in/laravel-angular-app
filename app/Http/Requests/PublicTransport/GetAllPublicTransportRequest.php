@@ -25,10 +25,10 @@ class GetAllPublicTransportRequest extends FormRequest
     public function rules()
     {
         return [
-            'sort_by.*' => ['string', Rule::in([
+            'sort_by' => ['string', Rule::in([
                 'id', 'type', 'route_number', 'capacity', 'organization_name', 'created_at', 'updated_at',
             ])],
-            'order.*' => ['string', Rule::in(['asc', 'desc'])],
+            'order' => ['string', Rule::in(['asc', 'desc'])],
             'page' => ['integer', 'gte:1'],
             'rows' => ['integer', 'gte:1'],
             'type.*' => ['string', Rule::in(config('constants.public_transport_types'))],
