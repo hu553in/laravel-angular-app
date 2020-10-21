@@ -15,8 +15,8 @@ return [
     ],
 
     'default_sorting_params' => [
-        'sort_by' => ['id'],
-        'order' => ['asc'],
+        'sort_by' => 'id',
+        'order' => 'asc',
     ]
 
 ];
