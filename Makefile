@@ -35,3 +35,7 @@ runTestsFrontendCommon:
 .PHONY: runTestsFrontendEndToEnd
 runTestsFrontendEndToEnd:
 	docker-compose exec ui sh -c 'npx ng e2e --port 4300'
+
+.PHONY: exposeViaNgrok
+exposeViaNgrok:
+	docker-compose exec ui sh -c '/opt/ngrok http 4200 --host-header=0.0.0.0:4200'

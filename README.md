@@ -31,11 +31,13 @@ named `./gui` (e.g. `ln -rs ../laravel-angular-app-gui ./gui`)
 you want to (re-)generate several app secrets in `./.env` file
 7. Run `make prepareDatabase` in the another terminal window in case if you want to
 (re-)migrate and (re-)seed the database
-8. Run `make runTestsBackend` in the another terminal window in case if you want to
+8. Run `make exposeViaNgrok` in the another terminal window in case if you want to
+share your app with an outside world using `ngrok`
+9. Run `make runTestsBackend` in the another terminal window in case if you want to
 run backend unit and feature tests
-9. Run `make runTestsFrontendCommon` in the another terminal window in case if you want
+10. Run `make runTestsFrontendCommon` in the another terminal window in case if you want
 to run frontend common tests
-10. Run `make runTestsFrontendEndToEnd` in the another terminal window in case if you
+11. Run `make runTestsFrontendEndToEnd` in the another terminal window in case if you
 want to run frontend end-to-end tests
 
 **Note:** You definitely must do steps 3, 5, 6 in case if you haven't run them before in your current environment.

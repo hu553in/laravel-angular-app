@@ -10,3 +10,8 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" \
 >> /etc/apt/sources.list.d/google.list'
 RUN apt-get update && apt-get install -yq google-chrome-stable
+
+ADD --chown=laravel_angular_app:laravel_angular_app \
+https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip /opt
+RUN unzip -d /opt /opt/ngrok-stable-linux-amd64.zip && \
+rm /opt/ngrok-stable-linux-amd64.zip
