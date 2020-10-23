@@ -9,7 +9,6 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
 class JwtMiddleware extends BaseMiddleware
@@ -25,7 +24,7 @@ class JwtMiddleware extends BaseMiddleware
     {
         $response = $next($request);
         try {
-            if (!JWTAuth::parseToken()->authenticate()) {
+            if (!$this->auth->parseToken()->authenticate()) {
                 return $this->respondUnauthorized("Unable to authenticate user by token");
             }
         } catch (TokenInvalidException $e) {
@@ -33,11 +32,11 @@ class JwtMiddleware extends BaseMiddleware
         } catch (JWTException $e) {
             if ($e instanceof TokenExpiredException || $e instanceof TokenBlacklistedException) {
                 try {
-                    $refreshedToken = JWTAuth::refresh(JWTAuth::getToken());
-                    JWTAuth::setToken($refreshedToken)->toUser();
+                    $refreshedToken = $this->auth->refresh();
+                    $response->header('Access-Control-Expose-Headers', 'token,token_type,expires_in');
                     $response->header('token', $refreshedToken);
                     $response->header('token_type', 'bearer');
-                    $response->header('expires_in', JWTAuth::factory()->getTTL() * 60);
+                    $response->header('expires_in', $this->auth->factory()->getTTL() * 60);
                 } catch (JWTException $e) {
                     return $this->respondUnauthorized("Token has expired and can not be refreshed");
                 }
