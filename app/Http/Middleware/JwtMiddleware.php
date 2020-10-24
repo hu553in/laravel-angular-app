@@ -38,7 +38,7 @@ class JwtMiddleware extends BaseMiddleware
                     $response->header('token_type', 'bearer');
                     $response->header('expires_in', $this->auth->factory()->getTTL() * 60);
                 } catch (JWTException $e) {
-                    return $this->respondUnauthorized("Token has expired and can not be refreshed");
+                    return $this->respondUnauthorized("Token has expired/blacklisted and can not be refreshed");
                 }
             } else {
                 return $this->respondUnauthorized("Unable to authenticate user by token");
