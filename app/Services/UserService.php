@@ -38,10 +38,8 @@ class UserService
         if (!$token = JWTAuth::attempt($credentials)) {
             throw new InvalidCredentialsException();
         }
-        $user = JWTAuth::user();
-        unset($user->email_verified_at);
         return [
-            'user' => $user,
+            'user' => $this->getUser(),
             'auth_data' => $this->formAuthDataObject($token),
         ];
     }
@@ -71,13 +69,30 @@ class UserService
     /**
      * Whoami.
      *
-     * @return mixed
+     * @return \Tymon\JWTAuth\Contracts\JWTSubject
      */
     public function whoami()
     {
-        if (!$user = JWTAuth::parseToken()->authenticate()) {
-            throw new UnableToAuthenticateUserByTokenException();
-        }
+        return $this->getUser();
+    }
+
+    /**
+     * Logout.
+     */
+    public function logout()
+    {
+        JWTAuth::parseToken()->invalidate();
+    }
+
+    /**
+     * Get user.
+     *
+     * @return \Tymon\JWTAuth\Contracts\JWTSubject
+     */
+    private function getUser()
+    {
+        $user = JWTAuth::user();
+        unset($user->email_verified_at);
         return $user;
     }
 }

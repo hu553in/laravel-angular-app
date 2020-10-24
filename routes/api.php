@@ -20,6 +20,7 @@ Route::post('sign_up', [UserController::class, 'signUp']);
 Route::post('sign_in', [UserController::class, 'signIn']);
 
 Route::group(['middleware' => ['jwt.authenticate']], function () {
+    Route::post('logout', [UserController::class, 'logout']);
     Route::get('whoami', [UserController::class, 'whoami']);
     Route::get('public_transport', [PublicTransportController::class, 'getAll']);
     Route::get('public_transport/{public_transport}', [PublicTransportController::class, 'get']);

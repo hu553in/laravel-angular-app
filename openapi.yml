@@ -272,6 +272,20 @@ paths:
           description: Invalid request body.
         "500":
           description: Unknown error.
+  /logout:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - User
+      summary: Logout.
+      responses:
+        "200":
+          description: Success.
+        "401":
+          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+        "500":
+          description: Unknown error.
   /whoami:
     get:
       security:

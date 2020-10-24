@@ -53,7 +53,6 @@ class UserController extends Controller
         );
     }
 
-
     /**
      * Whoami.
      *
@@ -67,5 +66,17 @@ class UserController extends Controller
         } catch (UnableToAuthenticateUserByTokenException $e) {
             return response()->common(Response::HTTP_UNAUTHORIZED, null, ["Unable to authenticate user by token"]);
         }
+    }
+
+    /**
+     * Logout.
+     *
+     * @param  \App\Services\UserService  $service
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(UserService $service)
+    {
+        $service->logout();
+        return response()->common(Response::HTTP_OK);
     }
 }
