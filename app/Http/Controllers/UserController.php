@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidCredentialsException;
-use App\Exceptions\UnableToAuthenticateUserByTokenException;
 use App\Http\Requests\User\SignInRequest;
 use App\Http\Requests\User\SignUpRequest;
 use App\Services\UserService;
@@ -61,11 +60,7 @@ class UserController extends Controller
      */
     public function whoami(UserService $service)
     {
-        try {
-            return response()->common(Response::HTTP_OK, $service->whoami());
-        } catch (UnableToAuthenticateUserByTokenException $e) {
-            return response()->common(Response::HTTP_UNAUTHORIZED, null, ["Unable to authenticate user by token"]);
-        }
+        return response()->common(Response::HTTP_OK, $service->whoami());
     }
 
     /**

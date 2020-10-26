@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Exceptions\InvalidCredentialsException;
-use App\Exceptions\UnableToAuthenticateUserByTokenException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
