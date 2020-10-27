@@ -26,9 +26,9 @@ class AddPublicTransportRequest extends FormRequest
     {
         return [
             'type' => ['required', 'string', Rule::in(config('constants.public_transport_types'))],
-            'route_number' => ['required', 'string'],
-            'capacity' => ['required', 'integer', 'gte:1'],
-            'organization_name' => ['required', 'string'],
+            'route_number' => ['required', 'string', 'max:255'],
+            'capacity' => ['required', 'integer', 'gte:1', 'lte:32767'],
+            'organization_name' => ['required', 'string', 'max:255'],
         ];
     }
 }

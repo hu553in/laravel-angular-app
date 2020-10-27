@@ -26,9 +26,9 @@ class UpdatePublicTransportRequest extends FormRequest
     {
         return [
             'type' => ['string', Rule::in(config('constants.public_transport_types'))],
-            'route_number' => ['string'],
-            'capacity' => ['integer', 'gte:1'],
-            'organization_name' => ['string'],
+            'route_number' => ['string', 'max:255'],
+            'capacity' => ['integer', 'gte:1', 'lte:32767'],
+            'organization_name' => ['string', 'max:255'],
         ];
     }
 }

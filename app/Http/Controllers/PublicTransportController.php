@@ -138,6 +138,6 @@ class PublicTransportController extends Controller
     public function delete(PublicTransport $publicTransport, PublicTransportService $service)
     {
         $service->delete($publicTransport);
-        return response()->common(Response::HTTP_NO_CONTENT);
+        return response()->noContent();
     }
 }

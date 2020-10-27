@@ -30,9 +30,9 @@ class GetAllPublicTransportRequest extends FormRequest
             ])],
             'order' => ['string', Rule::in(['asc', 'desc'])],
             'page' => ['integer', 'gte:1'],
-            'rows' => ['integer', 'gte:1'],
+            'rows' => ['integer', 'gte:1', 'lte:1000'],
             'type.*' => ['string', Rule::in(config('constants.public_transport_types'))],
-            'organization_name.*' => ['string'],
+            'organization_name.*' => ['string', 'max:255'],
         ];
     }
 }

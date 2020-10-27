@@ -49,6 +49,7 @@ paths:
           schema:
             type: integer
             minimum: 1
+            maximum: 1000
             default: 25
         - in: query
           name: sort_by
@@ -80,7 +81,11 @@ paths:
             Can be repeated to filter by several types.
           schema:
             type: string
-            example: trolleybus
+            enum:
+              - bus
+              - route_taxi
+              - tram
+              - trolleybus
         - in: query
           name: organization_name[]
           description: |
@@ -88,6 +93,7 @@ paths:
             Can be repeated to filter by several organization names.
           schema:
             type: string
+            maxLength: 255
             example: "Company #1"
       responses:
         "200":
@@ -104,7 +110,9 @@ paths:
                     items:
                       $ref: "#/components/schemas/PublicTransport"
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "500":
           description: Unknown error
     post:
@@ -136,7 +144,9 @@ paths:
         "400":
           description: Invalid request body.
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "500":
           description: Unknown error.
   /public_transport/{id}:
@@ -162,7 +172,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/PublicTransport"
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "404":
           description: Public transport is not found.
         "500":
@@ -198,7 +210,9 @@ paths:
         "400":
           description: Invalid request body.
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "404":
           description: Public transport is not found.
         "500":
@@ -219,9 +233,13 @@ paths:
             minimum: 0
       responses:
         "204":
-          description: Success.
+          description: |
+            Success (note that a response with "204 No Content"
+            status code is unable to contain a body at all).
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "404":
           description: Public transport is not found.
         "500":
@@ -244,7 +262,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignInResponse'
+                $ref: "#/components/schemas/SignInResponse"
         "400":
           description: Invalid credentials.
         "500":
@@ -283,7 +301,9 @@ paths:
         "200":
           description: Success.
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "500":
           description: Unknown error.
   /whoami:
@@ -301,7 +321,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/User"
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "500":
           description: Unknown error.
   /organization_name:
@@ -322,7 +344,9 @@ paths:
                   type: string
                   example: "Company #1"
         "401":
-          description: Unable to authenticate user by token (token is invalid, absent, has expired, etc).
+          description: |
+            Unable to authenticate user by token
+            (token is invalid, absent, has expired/blacklisted, etc).
         "500":
           description: Unknown error.
 
@@ -337,7 +361,7 @@ components:
       type: object
       description: |
         Public transport model.\
-        The `type-route_number` pair must be unique.
+        The `type`-`route_number` pair must be unique.
       required:
         - id
         - type
@@ -360,26 +384,29 @@ components:
         route_number:
           type: string
           minLength: 1
+          maxLength: 255
           example: 32г
         capacity:
           type: integer
           minimum: 1
+          maximum: 32767
           example: 50
         organization_name:
           type: string
           minLength: 1
+          maxLength: 255
           example: Пассажирское предприятие №8
         created_at:
           type: string
-          format: date-time
+          example: "2020-05-20 13:00:00"
         updated_at:
           type: string
-          format: date-time
+          example: "2020-05-20 13:00:00"
     AddPublicTransportRequest:
       type: object
       description: |
         Add public transport request.\
-        The `type-route_number` pair must be unique.
+        The `type`-`route_number` pair must be unique.
       required:
         - type
         - route_number
@@ -396,20 +423,23 @@ components:
         route_number:
           type: string
           minLength: 1
+          maxLength: 255
           example: 32г
         capacity:
           type: integer
           minimum: 1
+          maximum: 32767
           example: 50
         organization_name:
           type: string
           minLength: 1
+          maxLength: 255
           example: Пассажирское предприятие №8
     UpdatePublicTransportRequest:
       type: object
       description: |
         Update public transport request.\
-        The `type-route_number` pair must be unique.
+        The `type`-`route_number` pair must be unique.
       properties:
         type:
           type: string
@@ -421,14 +451,17 @@ components:
         route_number:
           type: string
           minLength: 1
+          maxLength: 255
           example: 32г
         capacity:
           type: integer
           minimum: 1
+          maximum: 32767
           example: 50
         organization_name:
           type: string
           minLength: 1
+          maxLength: 255
           example: Пассажирское предприятие №8
     SignInRequest:
       type: object
@@ -443,12 +476,14 @@ components:
         password:
           type: string
           minLength: 6
+          maxLength: 255
           example: zxcqwe123
     SignUpRequest:
       type: object
       description: |
         Sign up request.\
-        'password' and 'password_confirmation' values must be the same.
+        `email` must be unique.\
+        `password` and `password_confirmation` values must be the same.
       required:
         - name
         - email
@@ -458,6 +493,7 @@ components:
         name:
           type: string
           minLength: 1
+          maxLength: 255
           example: John
         email:
           type: string
@@ -465,33 +501,35 @@ components:
         password:
           type: string
           minLength: 6
+          maxLength: 255
           example: zxcqwe123
         password_confirmation:
           type: string
           minLength: 6
+          maxLength: 255
           example: zxcqwe123
     SignInResponse:
       type: object
       description: Sign in response.
       required:
         - user
-        - token
+        - auth_data
       properties:
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
         auth_data:
-          $ref: '#/components/schemas/AuthDataObject'
+          $ref: "#/components/schemas/AuthDataObject"
     SignUpResponse:
       type: object
       description: Sign up response.
       required:
         - user
-        - token
+        - auth_data
       properties:
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
         auth_data:
-          $ref: '#/components/schemas/AuthDataObject'
+          $ref: "#/components/schemas/AuthDataObject"
     User:
       type: object
       description: User model.
@@ -502,6 +540,7 @@ components:
         name:
           type: string
           minLength: 1
+          maxLength: 255
           example: John
         email:
           type: string
@@ -546,6 +585,7 @@ components:
         rows:
           type: integer
           minimum: 1
+          maximum: 1000
           example: 1
         next:
           type: string
