@@ -24,10 +24,10 @@ class PublicTransportTableSeeder extends Seeder
         ];
         $faker = Factory::create();
         $arrayOfRouteNumbersWithTypes = [];
+        $isUnique = function($newRouteNumber, $newType) use ($arrayOfRouteNumbersWithTypes) {
+            return !in_array("{$newRouteNumber}-{$newType}", $arrayOfRouteNumbersWithTypes);
+        };
         for ($i = 0; $i < 25; $i++) {
-            $isUnique = function($newRouteNumber, $newType) use ($arrayOfRouteNumbersWithTypes) {
-                return !in_array("{$newRouteNumber}-{$newType}", $arrayOfRouteNumbersWithTypes);
-            };
             $routeNumber = null;
             $type = null;
             do {

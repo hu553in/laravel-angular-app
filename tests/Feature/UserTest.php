@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Tests\TestCase;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ class UserTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->withoutMiddleware(ThrottleRequests::class);
     }
 
     public function test_sign_in_succeeds()

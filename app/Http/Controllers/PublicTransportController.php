@@ -27,13 +27,23 @@ class PublicTransportController extends Controller
         $rows = isset($request['rows'])
             ? intval($request['rows'])
             : $defaultPaginationParams['rows'];
-            $types = isset($request['type'])
-                ? array_filter($request['type'])
-                : [];
-            $organizationNames = isset($request['organization_name'])
-                ? array_filter($request['organization_name'])
-                : [];
-            $metaTotal = $service->countAll($types, $organizationNames);
+        $types = [];
+        if (isset($request['type'])) {
+            if (is_array($request['type'])) {
+                $types = array_filter($request['type']);
+            } else if (is_string($request['type'])) {
+                $types = [$request['type']];
+            }
+        }
+        $organizationNames = [];
+        if (isset($request['organization_name'])) {
+            if (is_array($request['organization_name'])) {
+                $organizationNames = array_filter($request['organization_name']);
+            } else if (is_string($request['organization_name'])) {
+                $organizationNames = [$request['organization_name']];
+            }
+        }
+        $metaTotal = $service->countAll($types, $organizationNames);
         $metaLast = intval(ceil(floatval($metaTotal) / $rows));
         if (isset($request['page'])) {
             $rawPage = intval($request['page']);

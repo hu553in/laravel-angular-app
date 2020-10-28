@@ -78,7 +78,9 @@ paths:
           name: type[]
           description: |
             Type to filter by.\
-            Can be repeated to filter by several types.
+            Can be repeated to filter by several types.\
+            Note that query string can contain just `type`
+            but in that case only one inclusion will be taken.
           schema:
             type: string
             enum:
@@ -90,7 +92,9 @@ paths:
           name: organization_name[]
           description: |
             Organization name to filter by.\
-            Can be repeated to filter by several organization names.
+            Can be repeated to filter by several organization names.\
+            Note that query string can contain just `organization_name`
+            but in that case only one inclusion will be taken.
           schema:
             type: string
             maxLength: 255
