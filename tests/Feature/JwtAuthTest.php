@@ -25,10 +25,7 @@ class JwtAuthTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $token = $response['data']['auth_data']['token'];
         $response = $this->get(
             '/api/whoami',
             ['Authorization' => "Bearer {$token}"]
@@ -117,10 +114,7 @@ class JwtAuthTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $token = $response['data']['auth_data']['token'];
         $response = $this->get(
             '/api/whoami',
             ['Authorization' => "Bearer {$token}"]
@@ -134,11 +128,9 @@ class JwtAuthTest extends TestCase
                 'email' => 'admin@gmail.com'
             ]
         ]);
-        $response = $this->post(
-            '/api/logout',
-            [],
-            ['Authorization' => "Bearer {$token}"]
-        );
+        $response = $this->post('/api/logout', [], [
+            'Authorization' => "Bearer {$token}"
+        ]);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],
