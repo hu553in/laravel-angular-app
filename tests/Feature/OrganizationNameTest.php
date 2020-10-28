@@ -11,17 +11,28 @@ class OrganizationNameTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $token;
     protected $seed = true;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->withoutMiddleware(ThrottleRequests::class);
+        $response = $this->post('/api/sign_in', [
+            'email' => 'admin@gmail.com',
+            'password' => 'admin_password'
+        ]);
+        $this->token = json_decode($response->baseResponse->getContent())
+            ->data
+            ->auth_data
+            ->token;
     }
 
     public function test_get_all_succeeds(): void
     {
-        $response = $this->withoutMiddleware()->get('/api/organization_name');
+        $response = $this->get('/api/organization_name', [
+            'Authorization' => "Bearer {$this->token}"
+        ]);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],

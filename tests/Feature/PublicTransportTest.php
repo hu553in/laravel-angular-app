@@ -18,11 +18,11 @@ class PublicTransportTest extends TestCase
     {
         parent::setUp();
         $this->withoutMiddleware(ThrottleRequests::class);
-        $signInResponse = $this->post('/api/sign_in', [
+        $response = $this->post('/api/sign_in', [
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $this->token = json_decode($signInResponse->baseResponse->getContent())
+        $this->token = json_decode($response->baseResponse->getContent())
             ->data
             ->auth_data
             ->token;
@@ -109,11 +109,11 @@ class PublicTransportTest extends TestCase
                     config('constants.public_transport_types')
                 )
             );
-            $this->assertGreaterThan(0, strlen($item['route_number']));
+            $this->assertNotEmpty($item['route_number']);
             $this->assertGreaterThan(0, $item['capacity']);
-            $this->assertGreaterThan(0, strlen($item['organization_name']));
-            $this->assertGreaterThan(0, strlen($item['created_at']));
-            $this->assertGreaterThan(0, strlen($item['updated_at']));
+            $this->assertNotEmpty($item['organization_name']);
+            $this->assertNotEmpty($item['created_at']);
+            $this->assertNotEmpty($item['updated_at']);
         }
     }
 
@@ -152,11 +152,11 @@ class PublicTransportTest extends TestCase
         foreach ($response['data']['paginated_data'] as $item) {
             $this->assertGreaterThan(0, $item['id']);
             $this->assertEquals('route_taxi', $item['type']);
-            $this->assertGreaterThan(0, strlen($item['route_number']));
+            $this->assertNotEmpty($item['route_number']);
             $this->assertGreaterThan(0, $item['capacity']);
             $this->assertEquals('Company #1', $item['organization_name']);
-            $this->assertGreaterThan(0, strlen($item['created_at']));
-            $this->assertGreaterThan(0, strlen($item['updated_at']));
+            $this->assertNotEmpty($item['created_at']);
+            $this->assertNotEmpty($item['updated_at']);
         }
     }
 
@@ -215,11 +215,11 @@ class PublicTransportTest extends TestCase
                 config('constants.public_transport_types')
             )
         );
-        $this->assertGreaterThan(0, strlen($response['data']['route_number']));
+        $this->assertNotEmpty($response['data']['route_number']);
         $this->assertGreaterThan(0, $response['data']['capacity']);
-        $this->assertGreaterThan(0, strlen($response['data']['organization_name']));
-        $this->assertGreaterThan(0, strlen($response['data']['created_at']));
-        $this->assertGreaterThan(0, strlen($response['data']['updated_at']));
+        $this->assertNotEmpty($response['data']['organization_name']);
+        $this->assertNotEmpty($response['data']['created_at']);
+        $this->assertNotEmpty($response['data']['updated_at']);
     }
 
     public function test_get_by_id_fails_because_of_non_existent_id(): void
@@ -270,8 +270,8 @@ class PublicTransportTest extends TestCase
             ]
         ]);
         $this->assertGreaterThan(0, $response['data']['id']);
-        $this->assertGreaterThan(0, strlen($response['data']['created_at']));
-        $this->assertGreaterThan(0, strlen($response['data']['updated_at']));
+        $this->assertNotEmpty($response['data']['created_at']);
+        $this->assertNotEmpty($response['data']['updated_at']);
         $this->assertDatabaseHas('public_transport', [
             'id' => $response['data']['id'],
             'type' => 'route_taxi',
@@ -368,8 +368,8 @@ class PublicTransportTest extends TestCase
             ]
         ]);
         $this->assertGreaterThan(0, $response['data']['id']);
-        $this->assertGreaterThan(0, strlen($response['data']['created_at']));
-        $this->assertGreaterThan(0, strlen($response['data']['updated_at']));
+        $this->assertNotEmpty($response['data']['created_at']);
+        $this->assertNotEmpty($response['data']['updated_at']);
         $this->assertDatabaseHas('public_transport', [
             'id' => $response['data']['id'],
             'type' => 'route_taxi',
