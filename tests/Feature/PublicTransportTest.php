@@ -22,18 +22,22 @@ class PublicTransportTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $this->token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $this->token = $response['data']['auth_data']['token'];
+    }
+
+    private function getHeaders(): array
+    {
+        return ['Authorization' => "Bearer {$this->token}"];
     }
 
     public function test_get_all_with_default_params_succeeds(): void
     {
-        $response = $this->get('/api/public_transport', [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->get('/api/public_transport', $this->getHeaders());
         $response->assertStatus(Response::HTTP_OK);
+        $paginated_data = [];
+        for ($i = 1; $i <= 25; $i++) {
+            array_push($paginated_data, ['id' => $i]);
+        }
         $response->assertJson([
             'errors' => [],
             'statusCode' => Response::HTTP_OK,
@@ -43,38 +47,10 @@ class PublicTransportTest extends TestCase
                     'total_pages' => 1,
                     'rows' => 25,
                     'page' => 1,
-                    'first' =>
-                    "/public_transport?page=1&rows=25&sort_by=id&order=asc",
-                    'last' =>
-                    "/public_transport?page=1&rows=25&sort_by=id&order=asc"
+                    'first' => "/public_transport?page=1&rows=25&sort_by=id&order=asc",
+                    'last' => "/public_transport?page=1&rows=25&sort_by=id&order=asc"
                 ],
-                'paginated_data' => [
-                    ['id' => 1],
-                    ['id' => 2],
-                    ['id' => 3],
-                    ['id' => 4],
-                    ['id' => 5],
-                    ['id' => 6],
-                    ['id' => 7],
-                    ['id' => 8],
-                    ['id' => 9],
-                    ['id' => 10],
-                    ['id' => 11],
-                    ['id' => 12],
-                    ['id' => 13],
-                    ['id' => 14],
-                    ['id' => 15],
-                    ['id' => 16],
-                    ['id' => 17],
-                    ['id' => 18],
-                    ['id' => 19],
-                    ['id' => 20],
-                    ['id' => 21],
-                    ['id' => 22],
-                    ['id' => 23],
-                    ['id' => 24],
-                    ['id' => 25]
-                ]
+                'paginated_data' => $paginated_data
             ]
         ]);
         $response->assertJsonStructure([
@@ -103,12 +79,10 @@ class PublicTransportTest extends TestCase
         $this->assertEquals(25, count($response['data']['paginated_data']));
         foreach ($response['data']['paginated_data'] as $item) {
             $this->assertGreaterThan(0, $item['id']);
-            $this->assertTrue(
-                in_array(
-                    $item['type'],
-                    config('constants.public_transport_types')
-                )
-            );
+            $this->assertTrue(in_array(
+                $item['type'],
+                config('constants.public_transport_types')
+            ));
             $this->assertNotEmpty($item['route_number']);
             $this->assertGreaterThan(0, $item['capacity']);
             $this->assertNotEmpty($item['organization_name']);
@@ -122,7 +96,7 @@ class PublicTransportTest extends TestCase
         $response = $this->get(
             '/api/public_transport?page=2&rows=10&sort_by=id&order=desc' .
                 '&type[]=route_taxi&organization_name[]=Company%20%231',
-            ['Authorization' => "Bearer {$this->token}"]
+            $this->getHeaders()
         );
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
@@ -138,15 +112,7 @@ class PublicTransportTest extends TestCase
                     'total_pages',
                     'rows'
                 ],
-                'paginated_data' => [[
-                    'id',
-                    'type',
-                    'route_number',
-                    'capacity',
-                    'organization_name',
-                    'created_at',
-                    'updated_at'
-                ]]
+                'paginated_data'
             ]
         ]);
         foreach ($response['data']['paginated_data'] as $item) {
@@ -165,7 +131,7 @@ class PublicTransportTest extends TestCase
         $response = $this->get(
             '/api/public_transport?page=zxc&rows=qwe&sort_by=nickname' .
                 '&order=from_up_to_down&type[]=airplane',
-            ['Authorization' => "Bearer {$this->token}"]
+            $this->getHeaders()
         );
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertExactJson([
@@ -186,9 +152,7 @@ class PublicTransportTest extends TestCase
 
     public function test_get_by_id_succeeds(): void
     {
-        $response = $this->get('/api/public_transport/1', [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->get('/api/public_transport/1', $this->getHeaders());
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
             'errors' => [],
@@ -209,12 +173,10 @@ class PublicTransportTest extends TestCase
             ]
         ]);
         $this->assertGreaterThan(0, $response['data']['id']);
-        $this->assertTrue(
-            in_array(
-                $response['data']['type'],
-                config('constants.public_transport_types')
-            )
-        );
+        $this->assertTrue(in_array(
+            $response['data']['type'],
+            config('constants.public_transport_types')
+        ));
         $this->assertNotEmpty($response['data']['route_number']);
         $this->assertGreaterThan(0, $response['data']['capacity']);
         $this->assertNotEmpty($response['data']['organization_name']);
@@ -224,9 +186,10 @@ class PublicTransportTest extends TestCase
 
     public function test_get_by_id_fails_because_of_non_existent_id(): void
     {
-        $response = $this->get('/api/public_transport/65536', [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->get(
+            '/api/public_transport/65536',
+            $this->getHeaders()
+        );
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertExactJson([
             'errors' => ["Requested resource is not found"],
@@ -242,9 +205,7 @@ class PublicTransportTest extends TestCase
             'route_number' => 'test_route_number',
             'capacity' => 32767,
             'organization_name' => 'test_organization_name'
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_CREATED);
         $response->assertJsonStructure([
             'errors',
@@ -287,14 +248,10 @@ class PublicTransportTest extends TestCase
     {
         $response = $this->post('/api/public_transport', [
             'type' => 'airplane',
-            'route_number' => [
-                'route_number_nested_property' => 13
-            ],
+            'route_number' => ['route_number_nested_property' => 13],
             'capacity' => 'capacity',
             'organization_name' => 3.14
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertExactJson([
             'errors' => [
@@ -317,9 +274,7 @@ class PublicTransportTest extends TestCase
             'route_number' => null,
             'capacity' => null,
             'organization_name' => ''
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertExactJson([
             'errors' => [
@@ -340,9 +295,7 @@ class PublicTransportTest extends TestCase
             'route_number' => 'test_route_number',
             'capacity' => 32767,
             'organization_name' => 'test_organization_name'
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'errors',
@@ -388,9 +341,7 @@ class PublicTransportTest extends TestCase
             'route_number' => '5',
             'capacity' => 25,
             'organization_name' => 'StrongestOrganizationEver'
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertExactJson([
             'errors' => ["Requested resource is not found"],
@@ -403,14 +354,10 @@ class PublicTransportTest extends TestCase
     {
         $response = $this->put('/api/public_transport/1', [
             'type' => 'airplane',
-            'route_number' => [
-                'route_number_nested_property' => 13
-            ],
+            'route_number' => ['route_number_nested_property' => 13],
             'capacity' => '',
             'organization_name' => 3.14
-        ], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        ], $this->getHeaders());
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertExactJson([
             'errors' => [
@@ -429,18 +376,14 @@ class PublicTransportTest extends TestCase
     public function test_delete_by_id_succeeds(): void
     {
         $this->assertDatabaseHas('public_transport', ['id' => 1]);
-        $response = $this->delete('/api/public_transport/1', [], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->delete('/api/public_transport/1', [], $this->getHeaders());
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertDatabaseMissing('public_transport', ['id' => 1]);
     }
 
     public function test_delete_by_id_fails_because_of_non_existent_id(): void
     {
-        $response = $this->delete('/api/public_transport/65536', [], [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->delete('/api/public_transport/65536', [], $this->getHeaders());
         $response->assertStatus(Response::HTTP_NOT_FOUND);
         $response->assertExactJson([
             'errors' => ['Requested resource is not found'],

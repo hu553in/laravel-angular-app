@@ -57,14 +57,12 @@ class UserTest extends TestCase
                 ]
             ]
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $token = $response['data']['auth_data']['token'];
         $this->assertNotEmpty($token);
-        $response = $this->get('/api/whoami', [
-            'Authorization' => "Bearer {$token}"
-        ]);
+        $response = $this->get(
+            '/api/whoami',
+            ['Authorization' => "Bearer {$token}"]
+        );
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],
@@ -162,10 +160,7 @@ class UserTest extends TestCase
                 ]
             ]
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $token = $response['data']['auth_data']['token'];
         $this->assertNotEmpty($token);
         $response = $this->get('/api/whoami', [
             'Authorization' => "Bearer {$token}"
@@ -268,13 +263,11 @@ class UserTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
-        $response = $this->get('/api/whoami', [
-            'Authorization' => "Bearer {$token}"
-        ]);
+        $token = $response['data']['auth_data']['token'];
+        $response = $this->get(
+            '/api/whoami',
+            ['Authorization' => "Bearer {$token}"]
+        );
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],
@@ -292,13 +285,11 @@ class UserTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
-        $response = $this->get('/api/whoami', [
-            'Authorization' => "Bearer {$token}"
-        ]);
+        $token = $response['data']['auth_data']['token'];
+        $response = $this->get(
+            '/api/whoami',
+            ['Authorization' => "Bearer {$token}"]
+        );
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],
@@ -317,9 +308,10 @@ class UserTest extends TestCase
             'statusCode' => Response::HTTP_OK,
             'data' => null
         ]);
-        $response = $this->get('/api/whoami', [
-            'Authorization' => "Bearer {$token}"
-        ]);
+        $response = $this->get(
+            '/api/whoami',
+            ['Authorization' => "Bearer {$token}"]
+        );
         $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         $response->assertExactJson([
             'errors' => ["Token has expired/blacklisted and can not be refreshed"],

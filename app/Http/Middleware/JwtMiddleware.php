@@ -24,7 +24,7 @@ class JwtMiddleware extends BaseMiddleware
     {
         try {
             if (!$this->auth->parseToken()->authenticate()) {
-                return $this->respondUnauthorized("Unable to authenticate user by token");
+                return $this->respondUnauthorized('Unable to authenticate user by token');
             }
         } catch (JWTException $e) {
             if ($e instanceof TokenExpiredException || $e instanceof TokenBlacklistedException) {
@@ -37,12 +37,12 @@ class JwtMiddleware extends BaseMiddleware
                     $response->header('expires_in', $this->auth->factory()->getTTL() * 60);
                     return $response;
                 } catch (JWTException $e) {
-                    return $this->respondUnauthorized("Token has expired/blacklisted and can not be refreshed");
+                    return $this->respondUnauthorized('Token has expired/blacklisted and can not be refreshed');
                 }
             } else if ($e instanceof TokenInvalidException) {
-                return $this->respondUnauthorized("Token is invalid");
+                return $this->respondUnauthorized('Token is invalid');
             } else {
-                return $this->respondUnauthorized("Unable to authenticate user by token");
+                return $this->respondUnauthorized('Unable to authenticate user by token');
             }
         }
         return $next($request);

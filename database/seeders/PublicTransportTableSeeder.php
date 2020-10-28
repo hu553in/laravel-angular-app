@@ -9,6 +9,18 @@ use Illuminate\Database\Seeder;
 class PublicTransportTableSeeder extends Seeder
 {
     /**
+     * Check if the given "type-route_number" pair is unique.
+     *
+     * @param  string  $routeNumber
+     * @param  string  $type
+     * @param  array  $arrayOfRouteNumbersWithTypes
+     * @return bool
+     */
+    function isUniqueTypeRouteNumberPair($routeNumber, $type, $arrayOfRouteNumbersWithTypes) {
+        return !in_array("{$routeNumber}-{$type}", $arrayOfRouteNumbersWithTypes);
+    }
+
+    /**
      * Seed the application's database ("public_transport" table).
      *
      * @return void
@@ -24,16 +36,13 @@ class PublicTransportTableSeeder extends Seeder
         ];
         $faker = Factory::create();
         $arrayOfRouteNumbersWithTypes = [];
-        $isUnique = function($newRouteNumber, $newType) use ($arrayOfRouteNumbersWithTypes) {
-            return !in_array("{$newRouteNumber}-{$newType}", $arrayOfRouteNumbersWithTypes);
-        };
         for ($i = 0; $i < 25; $i++) {
             $routeNumber = null;
             $type = null;
             do {
                 $routeNumber = "{$faker->numberBetween(1, 100)}{$faker->optional(0.5, "")->randomLetter()}";
                 $type = $faker->randomElement($publicTransportTypes);
-            } while (!$isUnique($routeNumber, $type));
+            } while (!$this->isUniqueTypeRouteNumberPair($routeNumber, $type, $arrayOfRouteNumbersWithTypes));
             array_push($arrayOfRouteNumbersWithTypes, "{$routeNumber}-{$type}");
             PublicTransport::create([
                 'type' => $type,

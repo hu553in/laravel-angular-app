@@ -22,17 +22,15 @@ class OrganizationNameTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => 'admin_password'
         ]);
-        $this->token = json_decode($response->baseResponse->getContent())
-            ->data
-            ->auth_data
-            ->token;
+        $this->token = $response['data']['auth_data']['token'];
     }
 
     public function test_get_all_succeeds(): void
     {
-        $response = $this->get('/api/organization_name', [
-            'Authorization' => "Bearer {$this->token}"
-        ]);
+        $response = $this->get(
+            '/api/organization_name',
+            ['Authorization' => "Bearer {$this->token}"]
+        );
         $response->assertStatus(Response::HTTP_OK);
         $response->assertExactJson([
             'errors' => [],
@@ -43,5 +41,11 @@ class OrganizationNameTest extends TestCase
                 'Company #3'
             ]
         ]);
+        foreach ($response['data'] as $item) {
+            $this->assertDatabaseHas(
+                'public_transport',
+                ['organization_name' => $item]
+            );
+        }
     }
 }
