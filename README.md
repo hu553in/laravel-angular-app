@@ -23,7 +23,7 @@ Also you can see it's source code in [./openapi.yml](./openapi.yml).
 ### Docker
 
 1. Install `GNU Make`, `Docker`, `Docker Compose`
-2. Create a relative symlink to [GUI](https://github.com/hu553in/laravel-angular-app-gui)
+2. Create a relative symlink to [the GUI](https://github.com/hu553in/laravel-angular-app-gui)
 named `./gui` (e.g. `ln -rs ../laravel-angular-app-gui ./gui`)
 3. Run `make createDotEnvForDocker` in case if you want to (re-)create `./.env` file
 4. Run `make run`
