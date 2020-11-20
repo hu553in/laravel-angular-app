@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository contains a sample web app built with Laravel and Angular.
+This project is a simple client-server app built with Laravel and Angular.
 
 ## Tech stack
 
