@@ -38,7 +38,7 @@ run backend unit and feature tests
 10. Run `make runTestsFrontendCommon` in the another terminal window in case if you want
 to run frontend common tests
 11. Run `make runTestsFrontendEndToEnd` in the another terminal window in case if you
-want to run frontend end-to-end tests
+want to run frontend integration (end-to-end) tests
 
 **Note:** You definitely must do steps 3, 5, 6 in case if
 you haven't run them before in your current environment.
